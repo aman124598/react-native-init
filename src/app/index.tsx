@@ -1,98 +1,144 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
+import { Button } from '@react-navigation/elements';
+import React from 'react';
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const index = () => {
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+  const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
+    <View style={styles.container}>
+
+      <Image
+        source={require('@/assets/images/icon.png')}
+        style={styles.logo}
+      />
+
+      <Text style={styles.title}>Sign In</Text>
+      <Text style={styles.subtitle}>Welcome back! Please sign in to your account.</Text>
+
+      <Text style={styles.label}>Email</Text>
+      <View style={styles.inputContainer}>
+        <Feather name="mail" size={20} color="gray" />
+        <TextInput
+          placeholder="Email"
+          style={styles.textInput}
+        />
+      </View>
+
+      <Text style={styles.label}>Password</Text>
+      <View style={styles.inputContainer}>
+        <Feather name="lock" size={20} color="gray" />
+        <TextInput
+          placeholder="Password"
+          secureTextEntry={!isPasswordVisible}
+          style={styles.textInput}
+        />
+        <Feather
+          name={isPasswordVisible ? 'eye' : 'eye-off'}
+          size={20}
+          color="gray"
+          onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+        />
+      </View>
+
+      <Button onPress={() => { alert("Signed-in") }} style={styles.signInButton}>
+        Sign In
+        <Feather name="arrow-right" size={20} color="white" style={styles.buttonIcon} />
+      </Button>
+
+      <View style={styles.socialContainer}>
+        <Feather name="facebook" size={20} color="#3b5998" style={styles.socialIcon} />
+        <Feather name="twitter" size={20} color="#00acee" style={[styles.socialIcon, styles.socialIconMargin]} />
+        <AntDesign name="google" size={20} color="#db4437" style={[styles.socialIcon, styles.socialIconMargin]} />
+      </View>
+
+      <View style={styles.footer}>
+        <Text>Don't have an account? <Text style={styles.link}>Sign Up
+        </Text></Text>
+        <Text style={styles.link}>Forgot your password?</Text>
+      </View>
+
+    </View>
+  )
 }
 
-export default function HomeScreen() {
-  return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
-  );
-}
+export default index
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    backgroundColor: 'white'
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  logo: {
+    width: 100,
+    height: 100,
+    marginTop: 20
   },
   title: {
-    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20
   },
-  code: {
-    textTransform: 'uppercase',
+  subtitle: {
+    fontSize: 16,
+    color: 'gray',
+    marginTop: 10
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  label: {
+    fontSize: 16,
+    marginTop: 20,
+    width: '80%',
+    fontWeight: 'bold'
   },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    width: '80%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 10
+  },
+  textInput: {
+    flex: 1,
+    height: 40,
+    marginLeft: 10,
+    color: 'black'
+  },
+  signInButton: {
+    marginTop: 20,
+    width: '80%',
+    backgroundColor: '#0c59d6',
+    fontWeight: 'bold',
+  },
+  buttonIcon: {
+    marginLeft: 10
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    marginTop: 20
+  },
+  socialIcon: {
+    borderColor: 'gray',
+    borderWidth: 2,
+    borderRadius: 7,
+    padding: 4
+  },
+  socialIconMargin: {
+    marginLeft: 20
+  },
+  link: {
+    color: '#0c59d6',
+    fontWeight: 'bold'
+  },
+  footer: {
+    marginTop: 20,
+    alignItems: 'center'
+  }
 });
