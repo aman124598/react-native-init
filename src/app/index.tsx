@@ -2,14 +2,19 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import { Button } from '@react-navigation/elements';
 import React from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, StatusBar, StyleSheet, Text, TextInput, View, type ViewStyle } from 'react-native';
 
 const index = () => {
+  const isActive = true;
+  const composedStyle = StyleSheet.compose(styles.signInButton, isActive && styles.activeButton);
 
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
 
   return (
+
     <View style={styles.container}>
+
+      <StatusBar barStyle="dark-content" /> // To set status bar visible in white bg.
 
       <Image
         source={require('@/assets/images/icon.png')}
@@ -18,7 +23,6 @@ const index = () => {
 
       <Text style={styles.title}>Sign In</Text>
       <Text style={styles.subtitle}>Welcome back! Please sign in to your account.</Text>
-
       <Text style={styles.label}>Email</Text>
       <View style={styles.inputContainer}>
         <Feather name="mail" size={20} color="gray" />
@@ -46,8 +50,8 @@ const index = () => {
 
       <Button onPress={() => { alert("Signed-in") }} style={styles.signInButton}>
         Sign In
-        <Feather name="arrow-right" size={20} color="white" style={styles.buttonIcon} />
       </Button>
+      <Feather name="arrow-right" size={20} color="white" style={styles.buttonIcon} />
 
       <View style={styles.socialContainer}>
         <Feather name="facebook" size={20} color="#3b5998" style={styles.socialIcon} />
@@ -60,6 +64,11 @@ const index = () => {
         </Text></Text>
         <Text style={styles.link}>Forgot your password?</Text>
       </View>
+
+
+      // Stylesheet Compose
+
+      <Button style={composedStyle as ViewStyle}>Hi</Button>
 
     </View>
   )
@@ -116,6 +125,9 @@ const styles = StyleSheet.create({
     width: '80%',
     backgroundColor: '#0c59d6',
     fontWeight: 'bold',
+  },
+  activeButton: {
+    opacity: 0.8,
   },
   buttonIcon: {
     marginLeft: 10
