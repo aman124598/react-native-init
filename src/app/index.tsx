@@ -1,87 +1,149 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import { Button } from '@react-navigation/elements';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import React from 'react';
-import { Image, StatusBar, StyleSheet, Text, TextInput, View, type ViewStyle } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Switch, Text, TextInput, useWindowDimensions, View, type ViewStyle } from 'react-native';
+
+const Themes = {
+  light: {
+    background: 'white',
+    text: 'black',
+    subtitle: 'gray',
+    inputBorder: 'gray',
+    icon: 'gray',
+    buttonBg: '#0c59d6',
+  },
+  dark: {
+    background: '#121212',
+    text: 'white',
+    subtitle: '#aaa',
+    inputBorder: '#555',
+    icon: '#aaa',
+    buttonBg: '#3f7ee8',
+  }
+};
 
 const index = () => {
+
+  const [isDarkMode, setIsDarkMode] = React.useState(true);
+  const theme = isDarkMode ? Themes.dark : Themes.light;
+  const dynamicStyles = getStyles(theme);
+
+  const { height, width } = useWindowDimensions();
+
+  console.log({ height, width });
+
+
   const isActive = true;
-  const composedStyle = StyleSheet.compose(styles.signInButton, isActive && styles.activeButton);
+  const composedStyle = StyleSheet.compose(dynamicStyles.signInButton, isActive && dynamicStyles.activeButton);
 
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: theme.background }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView contentContainerStyle={dynamicStyles.container} keyboardShouldPersistTaps="handled">
 
-    <View style={styles.container}>
+        {/* To set status bar visible in white bg. */}
+        <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
 
-      <StatusBar barStyle="dark-content" /> // To set status bar visible in white bg.
+        <View style={dynamicStyles.themeToggle}>
+          <Switch value={isDarkMode} onValueChange={setIsDarkMode} />
+        </View>
 
-      <Image
-        source={require('@/assets/images/icon.png')}
-        style={styles.logo}
-      />
-
-      <Text style={styles.title}>Sign In</Text>
-      <Text style={styles.subtitle}>Welcome back! Please sign in to your account.</Text>
-      <Text style={styles.label}>Email</Text>
-      <View style={styles.inputContainer}>
-        <Feather name="mail" size={20} color="gray" />
-        <TextInput
-          placeholder="Email"
-          style={styles.textInput}
+        <Image
+          source={require('@/assets/images/icon.png')}
+          style={dynamicStyles.logo}
         />
-      </View>
 
-      <Text style={styles.label}>Password</Text>
-      <View style={styles.inputContainer}>
-        <Feather name="lock" size={20} color="gray" />
-        <TextInput
-          placeholder="Password"
-          secureTextEntry={!isPasswordVisible}
-          style={styles.textInput}
-        />
-        <Feather
-          name={isPasswordVisible ? 'eye' : 'eye-off'}
-          size={20}
-          color="gray"
-          onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-        />
-      </View>
+        <Text style={dynamicStyles.title}>Sign In</Text>
+        <Text style={dynamicStyles.subtitle}>Welcome back! Please sign in to your account.</Text>
+        <Text style={dynamicStyles.label}>Email</Text>
+        <View style={dynamicStyles.inputContainer}>
+          <Feather name="mail" size={20} color={theme.icon} />
+          <TextInput
+            placeholder="Email"
+            placeholderTextColor={theme.subtitle}
+            style={dynamicStyles.textInput}
+          />
+        </View>
 
-      <Button onPress={() => { alert("Signed-in") }} style={styles.signInButton}>
-        Sign In
-      </Button>
-      <Feather name="arrow-right" size={20} color="white" style={styles.buttonIcon} />
+        <Text style={dynamicStyles.label}>Password</Text>
+        <View style={dynamicStyles.inputContainer}>
+          <Feather name="lock" size={20} color={theme.icon} />
+          <TextInput
+            placeholder="Password"
+            placeholderTextColor={theme.subtitle}
+            secureTextEntry={!isPasswordVisible}
+            style={dynamicStyles.textInput}
+          />
+          <Feather
+            name={isPasswordVisible ? 'eye' : 'eye-off'}
+            size={20}
+            color={theme.icon}
+            onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+          />
+        </View>
 
-      <View style={styles.socialContainer}>
-        <Feather name="facebook" size={20} color="#3b5998" style={styles.socialIcon} />
-        <Feather name="twitter" size={20} color="#00acee" style={[styles.socialIcon, styles.socialIconMargin]} />
-        <AntDesign name="google" size={20} color="#db4437" style={[styles.socialIcon, styles.socialIconMargin]} />
-      </View>
+        <Button onPress={() => { alert("Signed-in") }} style={dynamicStyles.signInButton}>
+          Sign In
+        </Button>
+        <Feather name="arrow-right" size={20} color="white" style={dynamicStyles.buttonIcon} />
 
-      <View style={styles.footer}>
-        <Text>Don't have an account? <Text style={styles.link}>Sign Up
-        </Text></Text>
-        <Text style={styles.link}>Forgot your password?</Text>
-      </View>
+        <View style={dynamicStyles.socialContainer}>
+          <Feather name="facebook" size={20} color="#3b5998" style={dynamicStyles.socialIcon} />
+          <Feather name="twitter" size={20} color="#00acee" style={[dynamicStyles.socialIcon, dynamicStyles.socialIconMargin]} />
+          <AntDesign name="google" size={20} color="#db4437" style={[dynamicStyles.socialIcon, dynamicStyles.socialIconMargin]} />
+        </View>
+
+        <View style={dynamicStyles.footer}>
+          <Text style={{ color: theme.text }}>Don't have an account? <Text style={dynamicStyles.link}>Sign Up
+          </Text></Text>
+          <Text style={dynamicStyles.link}>Forgot your password?</Text>
+        </View>
 
 
-      // Stylesheet Compose
+        {/* Stylesheet Compose */}
 
-      <Button style={composedStyle as ViewStyle}>Hi</Button>
+        <Button style={composedStyle as ViewStyle}>Hi</Button>
 
-    </View>
+        <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
+          <Button
+            onPress={() => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP)}
+          >
+            Force Portrait
+          </Button>
+          <Button
+            onPress={() => ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)}
+          >
+            Force Landscape
+          </Button>
+        </View>
+
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
 export default index
 
-const styles = StyleSheet.create({
+const getStyles = (theme: typeof Themes.light) => StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white'
+    backgroundColor: theme.background,
+    paddingVertical: 20
+  },
+  themeToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginTop: 20
   },
   logo: {
     width: 100,
@@ -91,25 +153,27 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 20
+    marginTop: 20,
+    color: theme.text
   },
   subtitle: {
     fontSize: 16,
-    color: 'gray',
+    color: theme.subtitle,
     marginTop: 10
   },
   label: {
     fontSize: 16,
     marginTop: 20,
     width: '80%',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: theme.text
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
     width: '80%',
-    borderColor: 'gray',
+    borderColor: theme.inputBorder,
     borderWidth: 1,
     paddingHorizontal: 10,
     borderRadius: 10
@@ -118,12 +182,12 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     marginLeft: 10,
-    color: 'black'
+    color: theme.text
   },
   signInButton: {
     marginTop: 20,
     width: '80%',
-    backgroundColor: '#0c59d6',
+    backgroundColor: theme.buttonBg,
     fontWeight: 'bold',
   },
   activeButton: {
@@ -137,16 +201,17 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   socialIcon: {
-    borderColor: 'gray',
+    borderColor: theme.inputBorder,
     borderWidth: 2,
     borderRadius: 7,
-    padding: 4
+    padding: 4,
+    color: theme.text
   },
   socialIconMargin: {
     marginLeft: 20
   },
   link: {
-    color: '#0c59d6',
+    color: theme.buttonBg,
     fontWeight: 'bold'
   },
   footer: {
